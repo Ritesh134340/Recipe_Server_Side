@@ -1,10 +1,10 @@
 const mongoose=require("mongoose");
-
+require("dotenv").config()
 
 mongoose.set('strictQuery', 
 true);
 
-const connection=mongoose.connect("mongodb+srv://passport:passport@cluster0.dyxlyd6.mongodb.net/?retryWrites=true&w=majority")
+const connection=mongoose.connect(process.env.DATABASE_URL)
 
 
 

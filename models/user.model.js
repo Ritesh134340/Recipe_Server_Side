@@ -2,9 +2,11 @@ const mongoose=require("mongoose");
 
 const userSchema=new mongoose.Schema({
     name:String,
-    email:String,
+    email:{type:String,unique:true,rquired:true},
     image:String,
-    googleId:String
+    role:{type:String,default:"user"},
+    googleId:String,
+    password:{type:String,require:true}
 
 })
 
