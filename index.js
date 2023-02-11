@@ -16,7 +16,9 @@ const adminRoute=require("./routes/admin.route")
 require("dotenv").config();
 // require("./config/googleStrategy")
 
-app.use(cors({origin:"*"}))
+
+
+app.use(cors())
 
 // app.use(cookieSession({
 //     name: 'session',
