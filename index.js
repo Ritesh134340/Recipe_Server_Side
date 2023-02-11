@@ -1,11 +1,11 @@
 const express=require("express")
 const connection=require("./config/db");
 const  app=express();
-const passport=require("passport")
+// const passport=require("passport")
 const cors=require("cors");
 
 // const cookieSession=require("cookie-session");
-const  cookieParser = require('cookie-parser')
+// const  cookieParser = require('cookie-parser')
 const appRoute=require("./routes/app.route")
 const googleRoute=require("./routes/google.route");
 const userRoute=require("./routes/user.route");
@@ -14,7 +14,7 @@ const adminRoute=require("./routes/admin.route")
 
   
 require("dotenv").config();
-require("./config/googleStrategy")
+// require("./config/googleStrategy")
 
 app.use(cors())
 
@@ -25,10 +25,10 @@ app.use(cors())
 // }));
 
 
-app.use(passport.initialize())
+// app.use(passport.initialize())
 // app.use(passport.session())
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.get("/",(req,res)=>{
     res.send({mesg:"Welcome to Recipe"})
