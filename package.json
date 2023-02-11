@@ -1,7 +1,17 @@
 {
-  "script":{
-   "start":"node index.js"
+  "name": "recipe_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start":"node index.js",
+    "dev":"nodemon index.js"
   },
+
+  "author": "",
+  "license": "ISC",
+ 
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
@@ -18,4 +28,5 @@
     "passport": "^0.5.3",
     "passport-google-oauth20": "^2.0.0"
   }
+ 
 }
