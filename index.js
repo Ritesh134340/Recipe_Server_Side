@@ -30,7 +30,9 @@ app.use(passport.initialize())
 app.use(express.json());
 app.use(cookieParser());
 
-
+app.get("/",(req,res)=>{
+    res.send({mesg:"Welcome to Recipe"})
+})
 app.use("/app",appRoute)
 app.use("/auth",googleRoute)
 app.use("/user",userRoute)
