@@ -3,51 +3,46 @@ const passport=require("passport");
 const User=require("../models/user.model")
 require("dotenv").config()
 
-passport.serializeUser(function(user, done) {
-  done(null,user._id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id).then((res)=>{
-   return  done(null, res);
-  })
-
-});
-
-
-
-
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret:process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://oauth-test-passportjs.onrender.com/auth/google/callback"
+    callbackURL: "http://localhost:8080/auth/google/callback"
   },
   async function(accessToken, refreshToken, profile, cb) {
-    const {sub,name,picture,email}=profile._json;
-    
+    const {sub,name,picture,email,family_name}=profile._json;
 
+    const document=await User.findOne({email:email});
     try{
-      const document=await User.findOne({email:email});
+     
       if(document){
-         cb(null,document)
+        return  cb(null,document)
       }
-      else{
+      if(!document){
+           let gender;
+           if(family_name.toLowerCase()==="kumar"){
+            gender="male"
+           }
+           if(family_name.toLowerCase()==="kumari"){
+            gender="female"
+           }
+           let password=name+sub;
         const newUser=new User({
           name:name,
-          email:email,
           googleId:sub,
           image:picture,
-          email:email
+          email:email,
+          gender:gender,
+          role:"user",
+          password:password,
+          favourite:[]
         })
-
-        await newUser.save();
-        const doc=User.findOne({email:email})
-        cb(null,doc)
+        await newUser.save(); 
+       return  cb(null,newUser)
       }
          
     }
     catch(err){
-      console.log(err)
+      console.log("Error in google strategy",err)
     }
   
   }

@@ -1,28 +1,78 @@
 const {Router}=require("express");
-const passport=require("passport")
+const passport=require("passport");
+const jwt=require("jsonwebtoken")
 const auth=Router()
 
+auth.get('/facebook',
+  passport.authenticate('facebook',{ scope : ['email'] }));
 
+
+  auth.get('/facebook/callback',(req,res,next)=>{
+
+    passport.authenticate('facebook',(err,user)=>{
+
+      if(err){
+  
+        return next(err)
+      }
+      if (!user) {
+       
+         return res.redirect(`${process.env.CLIENT_ADDRESS}/login`);
+     }
+     if(user){
+     
+      const authtoken=jwt.sign( {
+        email:user.email,
+        facebookId:user.facebookId
+      },process.env.SECRET_KEY)
+  
+      const token=jwt.sign({auth:authtoken},process.env.SECRET_KEY,{expiresIn:'5m'})
+  
+      const userString = encodeURIComponent(JSON.stringify(token));
+
+     
+  
+      res.redirect(`${process.env.CLIENT_ADDRESS}/redirect?jwt=${userString}`);
+      
+     }
+    })(req, res, next);
+  
+  })
+   
 
 auth.get('/google',
   passport.authenticate('google', { scope: ['email','profile'] }));
 
 
-auth.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/auth/login', passReqToCallback: true}),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    const user = req.user;
-    res.redirect(`http://localhost:3000/check?user=${encodeURIComponent(JSON.stringify(user))}`);
+auth.get('/google/callback',(req,res,next)=>{
 
-    // const userString = encodeURIComponent(JSON.stringify(newUser));
-    // res.redirect(`http://localhost:3000/googleCheck?user=${userString}`);
+  passport.authenticate('google',(err,user)=>{
+    if(err){
+     
+      return next(err)
+    }
+    if (!user) {
+     
+       return res.redirect(`${process.env.CLIENT_ADDRESS}/login`);
+   }
+   if(user){
+   
+    const authtoken=jwt.sign( {
+      email:user.email,
+      googleId:user.googleId
+    },process.env.SECRET_KEY)
 
-  });
+    const token=jwt.sign({auth:authtoken},process.env.SECRET_KEY,{expiresIn:'5m'})
 
-  auth.get('/login',(req,res)=>{
-    res.send("failed")
-  })
+    const userString = encodeURIComponent(JSON.stringify(token));
+
+    res.redirect(`${process.env.CLIENT_ADDRESS}/redirect?jwt=${userString}`);
+    
+   }
+  })(req, res, next);
+
+})
+ 
 
 
   module.exports=auth

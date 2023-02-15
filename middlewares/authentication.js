@@ -1,8 +1,35 @@
+const jwt=require("jsonwebtoken")
 
 
+const authentication=async(req,res,next)=>{
+    const token=req.headers?.authorization?.split(" ")[1];
 
-const authentication=(req,res,next)=>{
-  
+   
+    try{
+      jwt.verify(token,process.env.SECRET_KEY,(err,decoded)=>{
+       if(decoded){
+      
+        req.body.email=decoded.email;
+        if(decoded.googleId){
+        req.body.googleId=decoded.googleId
+        }
+        if(decoded.id){
+          req.body.id=decoded.id
+        }
+
+        next()
+        
+       }
+       if(err){
+        res.status(401).send({mesg:"Invalid token !"})
+       }
+      })
+   
+    }
+    catch(err){
+             res.status(500).send({ mesg: 'Internal server error !' });
+          
+    }
  
 }
 
