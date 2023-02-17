@@ -24,7 +24,6 @@ user.post("/login",async(req,res)=>{
                 favourite:check.favourite,
                 role:check.role
             }
-
                 res.status(200).send({mesg:"Login Successful",profile:userData,token:token})
                }
                if(!result){
