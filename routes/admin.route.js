@@ -16,9 +16,10 @@ admin.post("/chef/id", async (req, res) => {
   try {
     const document = await Chef.findOne({ _id: id });
     const videos = await Video.find({ chefId: id });
-    res.send({ document: document, videos: videos });
+    res.status(200).send({ document: document, videos: videos });
   } catch (err) {
     console.log(err);
+    res.status(500).send({mesg:"Internal server error !"})
   }
 });
 
@@ -47,7 +48,7 @@ admin.post("/create/video", async (req, res) => {
       chefId: data.chefId,
     });
 
-    if(check) {
+    if (check) {
       res.status(409).send({ mesg: "Video already exists !" });
     } else {
       const newVideo = new Video(data);
@@ -90,21 +91,11 @@ admin.delete("/delete/user/:id", async (req, res) => {
 
 admin.get("/getall/videos", async (req, res) => {
   try {
-    const queryObj = {};
-    const { publishedAt } = req.query;
+    let videoDocument = await Video.find();
 
-    const videoDocument = await Video.find(queryObj);
-
-    if (publishedAt) {
-      let order;
-      if (publishedAt === "asc") {
-        order = -1;
-        videoDocument.sort({ publishedAt: order });
-      }
-      if (publishedAt === "desc") {
-        order = 1;
-        videoDocument.sort({ publishedAt: order });
-      }
+    if (req.query.publishedAt) {
+      const sortOrder = req.query.publishedAt === "asc" ? 1 : -1;
+      videoDocument = await Video.find().sort({ createdAt: sortOrder }).exec();
     }
 
     res.status(200).send({ data: videoDocument });

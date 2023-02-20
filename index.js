@@ -14,7 +14,7 @@ require("dotenv").config();
 require("./config/googleStrategy");
 require("./config/facebookStrategy");
 
-app.use(cors({origin:"http://localhost:3000",credentials:true}));
+app.use(cors());
 app.use(session({
 
   secret:process.env.SECRET_KEY,
@@ -25,6 +25,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   

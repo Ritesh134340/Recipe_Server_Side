@@ -3,7 +3,7 @@ const mongoose=require("mongoose");
 const userSchema=new mongoose.Schema({
     name:String,
     email:{type:String,unique:true,rquired:true},
-    gender:{type:String},
+    gender:{type:String,default:"male"},
     image:String,
     role:{type:String,default:"user"},
     googleId:String,

@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const app = Router();
+const Chef=require("../models/chef.model")
 const Video = require("../models/video.model");
 const User = require("../models/user.model");
 const authentication = require("../middlewares/authentication");
@@ -97,5 +98,36 @@ app.get("/get/favourite",authentication,async(req,res)=>{
        res.status(500).send({mesg:"Internal server error !"})
     }
  })
+
+
+ app.get("/search",async(req,res)=>{
+  const searchTerm=req.query.title
+
+  try{
+    const searchResult=await Video.find({ title: { $regex:searchTerm, $options: 'i' } })
+
+    res.status(200).send({searchResult:searchResult})
+  }
+  catch(err){
+   res.status(500).send({mesg:"Internal server error !"})
+  }
+   
+ })
+
+
+
+ app.get("/chef/:id",async(req,res)=>{
+   
+      const id = req.params.id;
+  try {
+    const document = await Chef.findOne({ _id: id });
+    const videos = await Video.find({ chefId: id });
+    res.status(200).send({ document: document, videos: videos });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({mesg:"Internal server error !"})
+  }
+ })
+
 
 module.exports = app;

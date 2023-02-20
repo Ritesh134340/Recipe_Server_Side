@@ -14,7 +14,7 @@ const videoSchema=new mongoose.Schema({
     thumbnails:{type:String},
     publishedAt:{type:String},
     time:String
-})
+},{timestamps:true})
 
 const Video=mongoose.model("video",videoSchema
 )
