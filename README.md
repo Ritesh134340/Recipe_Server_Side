@@ -82,13 +82,13 @@ https://awesomerecipe.netlify.app
 
  ***Passport js***,
  ***Firebase Storage***,
-  ***NodeMailer***,
-   ***Bcrypt***,
-    ***Jsonwebtoken***,
-    ***Cors***, 
-    ***Passport-facebook***,
-     ***Passport-google-auth20***,
-       ***YoutubeApi***
+ ***NodeMailer***,
+ ***Bcrypt***,
+ ***Jsonwebtoken***,
+ ***Cors***, 
+ ***Passport-facebook***,
+  ***Passport-google-auth20***,
+  ***YoutubeApi***
 
 
 ## Screenshots
