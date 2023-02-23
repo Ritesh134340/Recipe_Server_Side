@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const app = Router();
-const Chef=require("../models/chef.model")
+const Chef = require("../models/chef.model");
+const translate = require("translate");
 const Video = require("../models/video.model");
 const User = require("../models/user.model");
 const authentication = require("../middlewares/authentication");
@@ -47,11 +48,10 @@ app.patch("/add/favourite", async (req, res) => {
     favourite: { $in: [videoId] },
   });
 
-  
   if (check) {
     return res
       .status(409)
-      .send({mesg:"Video already exists in your favourite list !"});
+      .send({ mesg: "Video already exists in your favourite list !" });
   }
   try {
     await User.findOneAndUpdate(
@@ -62,72 +62,79 @@ app.patch("/add/favourite", async (req, res) => {
     res.status(200).send({ mesg: "Added to favourite !" });
   } catch (err) {
     console.log(err);
-    res.status(500).send({mesg:"Internal server error !"});
+    res.status(500).send({ mesg: "Internal server error !" });
   }
 });
 
-
-
-app.get("/get/favourite",authentication,async(req,res)=>{
-  try{
-    const findUser=await User.findOne({ email: req.body.email })
-    const favouriteVideos=await Video.find({ _id: { $in: findUser.favourite } }) 
-       res.status(200).send({favourite:favouriteVideos})
+app.get("/get/favourite", authentication, async (req, res) => {
+  try {
+    const findUser = await User.findOne({ email: req.body.email });
+    const favouriteVideos = await Video.find({
+      _id: { $in: findUser.favourite },
+    });
+    res.status(200).send({ favourite: favouriteVideos });
+  } catch (err) {
+    res.status(500).send({ mesg: "Internal server error !" });
   }
-  catch(err){
-    res.status(500).send({mesg:"Internal server error !"})
-  }   
- })
+});
 
+app.delete("/delete/favourite/:id", authentication, async (req, res) => {
+  try {
+    const userEmail = req.body.email;
+    const videoId = req.params.id;
+    await User.findOneAndUpdate(
+      { email: userEmail },
+      { $pull: { favourite: videoId } }
+    );
 
- app.delete("/delete/favourite/:id",authentication,async(req,res)=>{
- 
-    try{
-      const userEmail=req.body.email;
-      const videoId=req.params.id
-      await User.findOneAndUpdate(
-        { email:userEmail}, { $pull: { favourite:videoId }}
-      );
+    const findUser = await User.findOne({ email: userEmail });
 
-      const findUser=await User.findOne({email:userEmail});
-  
-      const favouriteVideos=await Video.find({ _id: { $in: findUser.favourite } }) 
-      res.status(200).send({mesg:"Removed from favourite !",updatedList:favouriteVideos})
-    }
-    catch(err){
-       res.status(500).send({mesg:"Internal server error !"})
-    }
- })
-
-
- app.get("/search",async(req,res)=>{
-  const searchTerm=req.query.title
-
-  try{
-    const searchResult=await Video.find({ title: { $regex:searchTerm, $options: 'i' } })
-
-    res.status(200).send({searchResult:searchResult})
+    const favouriteVideos = await Video.find({
+      _id: { $in: findUser.favourite },
+    });
+    res
+      .status(200)
+      .send({ mesg: "Removed from favourite !", updatedList: favouriteVideos });
+  } catch (err) {
+    res.status(500).send({ mesg: "Internal server error !" });
   }
-  catch(err){
-   res.status(500).send({mesg:"Internal server error !"})
+});
+
+app.get("/search", async (req, res) => {
+  let englishText = req.query.title;
+
+  translate.engine = "google";
+  translate.from = "en";
+  translate.to = "hi";
+
+  const newEnglishText = englishText.split(" ");
+  let hindiText = await translate(newEnglishText);
+  hindiText = hindiText.split(" ");
+
+  const newArray = [...hindiText, ...newEnglishText];
+
+  const regexKeywords = newArray.map((keyword) => new RegExp(keyword, "i"));
+  try {
+    const searchResult = await Video.find({
+      $or: [{ title: { $in: regexKeywords } }],
+    });
+
+    res.status(200).send({ searchResult: searchResult });
+  } catch (err) {
+    res.status(500).send({ mesg: "Internal server error !" });
   }
-   
- })
+});
 
-
-
- app.get("/chef/:id",async(req,res)=>{
-   
-      const id = req.params.id;
+app.get("/chef/:id", async (req, res) => {
+  const id = req.params.id;
   try {
     const document = await Chef.findOne({ _id: id });
     const videos = await Video.find({ chefId: id });
     res.status(200).send({ document: document, videos: videos });
   } catch (err) {
     console.log(err);
-    res.status(500).send({mesg:"Internal server error !"})
+    res.status(500).send({ mesg: "Internal server error !" });
   }
- })
-
+});
 
 module.exports = app;

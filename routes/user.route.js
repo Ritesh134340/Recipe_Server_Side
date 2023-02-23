@@ -159,7 +159,7 @@ user.post("/otp/verify",async(req,res)=>{
     }
     try{
        const decoded=await jwt.verify(req.body.token,process.env.SECRET_KEY)
-       console.log("dec",decoded)
+    
        const check=await User.findOne({email:decoded.email})
 
        if(check.otp===req.body.otp){
