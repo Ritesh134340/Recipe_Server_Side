@@ -45,7 +45,7 @@ auth.get('/google',
 
 
 auth.get('/google/callback',(req,res,next)=>{
-
+  console.log(process.env.CLIENT_ADDRESS)
   passport.authenticate('google',(err,user)=>{
     if(err){
      
