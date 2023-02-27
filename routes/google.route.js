@@ -45,7 +45,7 @@ auth.get('/google',
 
 
 
-  
+
 auth.get('/google/callback',(req,res,next)=>{
   console.log(process.env.CLIENT_ADDRESS)
   passport.authenticate('google',(err,user)=>{
@@ -68,7 +68,7 @@ auth.get('/google/callback',(req,res,next)=>{
 
     const userString = encodeURIComponent(JSON.stringify(token));
 
-    res.redirect(`https://recipe-server-8xyf.onrender.com/redirect?jwt=${userString}`);
+    res.redirect(`${process.env.CLIENT_ADDRESS}/redirect?jwt=${userString}`);
     
    }
   })(req, res, next);
