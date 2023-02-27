@@ -1,5 +1,4 @@
 const express = require("express");
-const session=require('express-session')
 const connection = require("./config/db");
 const app = express();
 const passport = require("passport");
@@ -15,13 +14,6 @@ require("./config/googleStrategy");
 require("./config/facebookStrategy");
 
 app.use(cors());
-app.use(session({
-
-  secret:process.env.SECRET_KEY,
-  cookie:{},
-  resave:false,
-  saveUninitialized:false
-}))
 
 app.use(passport.initialize());
 app.use(express.json());
