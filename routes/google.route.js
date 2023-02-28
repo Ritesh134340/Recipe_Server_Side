@@ -20,8 +20,8 @@ auth.get('/facebook',
          return res.redirect(`${process.env.CLIENT_ADDRESS}/login`);
      }
      if(user){
-      console.log('facebook user',user)
-      
+     
+
       const authtoken=jwt.sign( {
         email:user.email,
         facebookId:user.facebookId
@@ -59,7 +59,7 @@ auth.get('/google/callback',(req,res,next)=>{
        return res.redirect(`${process.env.CLIENT_ADDRESS}/login`);
    }
    if(user){
-     console.log('google user',user)
+     
     const authtoken=jwt.sign( {
       email:user.email,
       googleId:user.googleId
