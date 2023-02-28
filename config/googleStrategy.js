@@ -6,7 +6,7 @@ require("dotenv").config()
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret:process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.CALL_BACK_URL
+    callbackURL:`${process.env.CALL_BACK_URL}`
   },
   async function(accessToken, refreshToken, profile, cb) {
     const {sub,name,picture,email,family_name}=profile._json;
