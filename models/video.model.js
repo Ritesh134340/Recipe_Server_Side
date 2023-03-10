@@ -13,7 +13,9 @@ const videoSchema=new mongoose.Schema({
     description:{type:String},
     thumbnails:{type:String},
     publishedAt:{type:String},
-    time:String
+    time:String,
+    rating:{type:Number,default:0},
+    ratedBy:[Object]
 },{timestamps:true})
 
 const Video=mongoose.model("video",videoSchema

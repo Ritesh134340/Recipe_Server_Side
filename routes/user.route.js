@@ -22,7 +22,8 @@ user.post("/login",async(req,res)=>{
                 email:check.email,
                 image:check.image,
                 favourite:check.favourite,
-                role:check.role
+                role:check.role,
+                id:check._id
             }
                 res.status(200).send({mesg:"Login Successful",profile:userData,token:token})
                }
@@ -107,7 +108,8 @@ user.get("/profile",authentication,async(req,res)=>{
             email:userDocument.email,
             image:userDocument.image,
             favourite:userDocument.favourite,
-            role:userDocument.role
+            role:userDocument.role,
+            id:userDocument._id
         }
 
             res.status(200).send({mesg:"Authentication successful",profile:userData,token:token})

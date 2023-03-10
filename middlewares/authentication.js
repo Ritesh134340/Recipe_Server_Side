@@ -4,7 +4,7 @@ const jwt=require("jsonwebtoken")
 const authentication=async(req,res,next)=>{
   
     const token=req.headers?.authorization?.split(" ")[1];
-  
+   
     try{
       jwt.verify(token,process.env.SECRET_KEY,(err,decoded)=>{
        if(decoded){
@@ -21,12 +21,14 @@ const authentication=async(req,res,next)=>{
         
        }
        if(err){
+        console.log(err,"Error from authentication middleware !")
         res.status(401).send({mesg:"Invalid token !"})
        }
       })
    
     }
     catch(err){
+             console.log(err,"Error from authentication middleware")
              res.status(500).send({ mesg: 'Internal server error !' });
           
     }

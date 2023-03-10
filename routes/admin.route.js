@@ -6,13 +6,23 @@ const Chef = require("../models/chef.model");
 const User = require("../models/user.model");
 const Video = require("../models/video.model");
 
-admin.get("/get/chef", async (req, res) => {
+
+
+admin.get("/get/chef",authenticate,authorize('admin'), async (req, res) => {
+ try{
   const document = await Chef.find({});
-  res.send({ document: document });
+  res.status(200).send({ document: document });
+ }
+ catch(err){
+  console.log(err,"From Admin route")
+  res.status(500).send({mesg:"Internal server error !"})
+ }
+  
 });
 
-admin.post("/chef/id", async (req, res) => {
-  const id = req.body.id;
+
+admin.get("/chef/:id",authenticate,authorize('admin'),async (req, res) => {
+  const id = req.params.id;
   try {
     const document = await Chef.findOne({ _id: id });
     const videos = await Video.find({ chefId: id });
@@ -23,7 +33,9 @@ admin.post("/chef/id", async (req, res) => {
   }
 });
 
-admin.post("/create/chef", async (req, res) => {
+
+
+admin.post("/create/chef",authenticate,authorize('admin'), async (req, res) => {
   try {
     const check = await Chef.findOne({ channel: req.body.channel });
 
@@ -32,7 +44,7 @@ admin.post("/create/chef", async (req, res) => {
     } else {
       const newChef = new Chef(req.body);
       await newChef.save();
-      res.send({ mesg: "Entry created successfully !" });
+      res.send({ mesg: "Channel created successfully !" });
     }
   } catch (err) {
     console.log(err);
@@ -40,27 +52,48 @@ admin.post("/create/chef", async (req, res) => {
   }
 });
 
-admin.post("/create/video", async (req, res) => {
+
+admin.post("/create/video",authenticate,authorize('admin'), async (req, res) => {
+
+
   try {
     const data = req.body;
     const check = await Video.findOne({
-      videoId: data.videoId,
-      chefId: data.chefId,
+      videoId: data.videoId,chefId:data.chefId
     });
 
     if (check) {
       res.status(409).send({ mesg: "Video already exists !" });
     } else {
-      const newVideo = new Video(data);
+
+    
+      const newVideoData={
+        chefId:data.chefId,
+        channelId:data.channelId,
+        channelLogo:data.channelLogo,
+        postTime:data.postTime,
+        postDate:data.postDate,
+        chefName:data.chefName,
+        channelName:data.channelName,
+        time:data.time,
+        videoId:data.videoId,
+        title:data.title,
+        description:data.description,
+        thumbnails:data.thumbnails
+      }
+      const newVideo = new Video(newVideoData);
       await newVideo.save();
       res.status(200).send({ mesg: "Video created successfully !" });
     }
   } catch (err) {
+    console.log(err)
     res.status(500).send({ mesg: "Something went wrong !" });
   }
 });
 
-admin.get("/video/:id", async (req, res) => {
+
+
+admin.get("/video/:id",authenticate,authorize('admin'), async (req, res) => {
   try {
     const document = await Video.findOne({ _id: req.params.id });
     res.send({ document: document });
@@ -69,18 +102,24 @@ admin.get("/video/:id", async (req, res) => {
   }
 });
 
-admin.delete("/delete/video/:id", async (req, res) => {
+admin.delete("/delete/video/:id",authenticate,authorize('admin'), async (req, res) => {
+ 
   const videoId = req.params.id;
+
   try {
-    await Video.findByIdAndDelete({ _id: videoId });
+    await Video.findByIdAndDelete({_id:videoId});
     res.status(200).send({ mesg: "Video deleted successfully !" });
   } catch (err) {
+    console.log(err)
     res.status(500).send({ mesg: "Internal Server Error !" });
   }
 });
 
-admin.delete("/delete/user/:id", async (req, res) => {
+
+
+admin.delete("/delete/user/:id",authenticate,authorize('admin'), async (req, res) => {
   try {
+    
     const deleteId = req.params.id;
     await User.findByIdAndDelete(deleteId);
     res.status(200).send({ mesg: "User deleted successfully !" });
@@ -89,7 +128,8 @@ admin.delete("/delete/user/:id", async (req, res) => {
   }
 });
 
-admin.get("/getall/videos", async (req, res) => {
+admin.get("/getall/videos",authenticate,authorize('admin'), async (req, res) => {
+
   try {
     let videoDocument = await Video.find();
 
@@ -104,7 +144,8 @@ admin.get("/getall/videos", async (req, res) => {
   }
 });
 
-admin.get("/users", async (req, res) => {
+admin.get("/users",authenticate,authorize('admin') ,async (req, res) => {
+
   try {
     const userData = await User.find({});
 
