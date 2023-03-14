@@ -47,7 +47,7 @@ user.post("/login",async(req,res)=>{
   
 })
 
-user.post("/add/favourite",async(req,res)=>{
+user.post("/add/favourite",authentication,async(req,res)=>{
     await User.updateOne({ email:req.body.email }, { $push: { favourite: req.body.videoId } });
     res.send({mesg:"Added to favourite !"})
 })
@@ -77,11 +77,21 @@ user.post("/signup",async(req,res)=>{
 
                 await newUser.save()
 
-                const savedDocument=await User.findOne({email:email})
-               
-                const token=jwt.sign({email:email,id:savedDocument._id},process.env.SECRET_KEY)
+                const userDocument=await User.findOne({email:email})
 
-                res.status(201).send({mesg:"Signup Successful !",profile:savedDocument,token:token})
+
+                const userData={
+                    name:userDocument.name,
+                    email:userDocument.email,
+                    image:userDocument.image,
+                    favourite:userDocument.favourite,
+                    role:userDocument.role,
+                    id:userDocument._id
+                }
+               
+                const token=jwt.sign({email:email,id:userDocument._id},process.env.SECRET_KEY)
+
+                res.status(201).send({mesg:"Signup Successful !",profile:userData,token:token})
                 }
                 if(err){
                  res.status(500).send({mesg:"Signup failed !"})
@@ -211,6 +221,51 @@ user.patch("/password/change", async (req, res) => {
       res.status(500).send({ mesg: "Internal server error!" });
     }
   });
+
+
+  user.patch("/edit/details",authentication,async(req,res)=>{
+    try{
+
+          const updateObject={}
+
+           if(req.body.newEmail){
+             updateObject.email=req.body.newEmail
+           }
+           if(req.body.name){
+            updateObject.name=req.body.name
+           }
+           if(req.body.image){
+            updateObject.image=req.body.image
+           }
+          
+            
+
+            await User.findOneAndUpdate({_id:req.body.id},updateObject)
+
+           const updatedUser=  await  User.findOne({_id:req.body.id})
+
+          
+
+           const token = jwt.sign({email:req.params.email,id:updatedUser._id}, process.env.SECRET_KEY);
+
+            const userData={
+                name:updatedUser.name,
+                email:updatedUser.email,
+                image:updatedUser.image,
+                favourite:updatedUser.favourite,
+                role:updatedUser.role,
+                id:updatedUser._id
+            }
+           
+           res.status(200).send({mesg:"Profile updated successfully",token:token,profile:userData})
+
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).send({ mesg: "Internal server error!" });
+    }
+  })
+
   
 
 module.exports=user;

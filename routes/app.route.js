@@ -81,12 +81,12 @@ app.post("/rate/video", authentication, async (req, res) => {
 
     const check = await Video.findOne(
       {
-        _id: videoId,
-      },
-      { ratedBy: { $elemMatch: { userId: id } } }
+        _id: videoId,ratedBy: { $elemMatch: { userId: id } }
+      }
     );
-  
-    if (check.ratedBy.length === 0) {
+     
+
+    if (!check) {
       const pushObject = { userRating: rating, userId: id };
   
       await Video.findOneAndUpdate(
@@ -224,6 +224,27 @@ app.get("/chef/:id", async (req, res) => {
   }
 });
 
+app.delete("/video/:videoId/comment/:commentId",authentication,async(req,res)=>{
+  let videoId=(req.params.videoId);
+  let commentId=req.params.commentId;
+
+  try{
+    await Comment.updateOne(
+      { videoId: videoId },
+      { $pull: { comment: { commentId: commentId } } }
+    );
+
+    const commentsDocument =await Comment.findOne({videoId:videoId})
+
+    let comments=commentsDocument ? commentsDocument : {};
+
+     res.status(200).send({mesg:"Comment deleted successfully !",comments:comments})
+  }
+  catch(err){
+      console.log(err);
+      res.status(500).send({ mesg: "Internal server error!" });
+  }
+})
 
 app.post("/add/comment",authentication,async(req,res)=>{
 
