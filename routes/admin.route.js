@@ -5,8 +5,94 @@ const authorize = require("../middlewares/authorization");
 const Chef = require("../models/chef.model");
 const User = require("../models/user.model");
 const Video = require("../models/video.model");
+const Home=require("../models/home.model");
 
 
+admin.get("/home/data",async(req,res)=>{
+    try{
+      const homeData=await Home.findOne({})
+      res.status(200).send({mesg:"Ok",homeData:homeData})
+    }
+    catch(err){
+      console.log(err,"From Admin route")
+     res.status(500).send({mesg:"Internal server error !"})
+    }
+   
+})
+
+admin.patch("/update/home/data",authenticate,authorize('admin'),async(req,res)=>{
+   try{    
+      
+         const updateFields = {};
+         
+         if (req.body.text) {
+           updateFields["carouselData.$.text"] = req.body.text;
+         }
+         if (req.body.image) {
+           updateFields["carouselData.$.image"] = req.body.image;
+         }
+
+
+         await  Home.findOneAndUpdate(
+          { "carouselData._id": req.body.imageId },
+          { $set: updateFields })
+
+
+         res.status(200).send({mesg:"Data updated successfully !"})
+   }
+   catch(err){
+    console.log(err,"From Admin route")
+    res.status(500).send({mesg:"Internal server error !"})
+   }
+})
+
+
+admin.put("/add/carousel/data",authenticate,authorize('admin'),async(req,res)=>{
+  try{    
+         const newData={
+          image:req.body.image,
+          text:req.body.text
+         }
+
+         const check=await Home.findOne({_id:req.body.dataId,carouselData:{$elemMatch:{image:req.body.image}}})
+
+        if(check){
+          return   res.status(404).send({mesg:"Data already exists !"})
+        }
+
+         await Home.findOneAndUpdate({_id:req.body.dataId,$push:{carouselData:newData}})
+         res.status(200).send({mesg:"Data added successfully !"})
+  }
+  catch(err){
+   console.log(err,"From Admin route")
+   res.status(500).send({mesg:"Internal server error !"})
+  }
+})
+
+
+admin.delete("/delete/data/:objectId/image/:imageId",authenticate,authorize('admin'),async(req,res)=>{
+  try{    
+        
+         await Home.findOneAndUpdate({_id:req.params.objectId,$pull:{carouselData:{_id:req.params.imageId}}})
+
+         res.status(200).send({mesg:"Deleted successfully !"})
+  }
+  catch(err){
+   console.log(err,"From Admin route")
+   res.status(500).send({mesg:"Internal server error !"})
+  }
+})
+
+
+admin.patch("/update/hero/image",authenticate,authorize('admin'),async(req,res)=>{
+  try{    
+         console.log("new home image") 
+  }
+  catch(err){
+   console.log(err,"From Admin route")
+   res.status(500).send({mesg:"Internal server error !"})
+  }
+})
 
 admin.get("/get/chef",authenticate,authorize('admin'), async (req, res) => {
  try{

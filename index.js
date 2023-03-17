@@ -19,8 +19,8 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  
+app.get("/",async(req, res) => {
+ 
   res.send({ mesg: "Welcome to Recipe" });
 });
 app.use("/app", appRoute);
