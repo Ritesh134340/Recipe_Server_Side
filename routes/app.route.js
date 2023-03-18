@@ -5,7 +5,7 @@ const translate = require("translate");
 const Video = require("../models/video.model");
 const User = require("../models/user.model");
 const authentication = require("../middlewares/authentication");
-const Comment=require("../models/comment.model")
+const Comment = require("../models/comment.model");
 
 app.get("/get/chef", async (req, res) => {
   try {
@@ -43,13 +43,12 @@ app.get("/getall/videos", async (req, res) => {
 
 app.get("/get/video/:id", async (req, res) => {
   try {
-   
     const document = await Video.findOne({ _id: req.params.id });
 
-    const commentsDocument=await Comment.findOne({videoId:req.params.id})
-    let comments=commentsDocument ? commentsDocument : {};
+    const commentsDocument = await Comment.findOne({ videoId: req.params.id });
+    let comments = commentsDocument ? commentsDocument : {};
 
-    res.status(200).send({ document: document ,comments:comments});
+    res.status(200).send({ document: document, comments: comments });
   } catch (err) {
     res.status(500).send({ mesg: "Internal server error !" });
   }
@@ -58,72 +57,54 @@ app.get("/get/video/:id", async (req, res) => {
 app.post("/rate/video", authentication, async (req, res) => {
   const { videoId, rating, id } = req.body;
 
-  try{
+  try {
+    async function addRating() {
+      let sum = 0;
 
-    async function addRating(){
-      let sum=0;
+      const videoDocument = await Video.findOne({ _id: videoId });
 
-      const videoDocument=await Video.findOne({_id:videoId})
-   
-      for(let i=0;i<videoDocument.ratedBy.length;i++){
-        sum+=Number(videoDocument.ratedBy[i].userRating)
+      for (let i = 0; i < videoDocument.ratedBy.length; i++) {
+        sum += Number(videoDocument.ratedBy[i].userRating);
       }
 
-   
-    
-     const avgRating=sum/videoDocument.ratedBy.length  
-      
-    return avgRating.toFixed(2)
+      const avgRating = sum / videoDocument.ratedBy.length;
 
+      return avgRating.toFixed(2);
     }
-  
-  
 
-    const check = await Video.findOne(
-      {
-        _id: videoId,ratedBy: { $elemMatch: { userId: id } }
-      }
-    );
-     
+    const check = await Video.findOne({
+      _id: videoId,
+      ratedBy: { $elemMatch: { userId: id } },
+    });
 
     if (!check) {
       const pushObject = { userRating: rating, userId: id };
-  
+
       await Video.findOneAndUpdate(
         { _id: videoId },
         { $push: { ratedBy: pushObject } }
       );
-      
-        
-      const newRating=await addRating()
-      await Video.findOneAndUpdate({_id:videoId},{rating:newRating})
-      
-      res.status(200).send({mesg:"Thanks for rating !"});
 
-    } 
-    else {
+      const newRating = await addRating();
+      await Video.findOneAndUpdate({ _id: videoId }, { rating: newRating });
 
+      res.status(200).send({ mesg: "Thanks for rating !" });
+    } else {
       const filter = { _id: videoId, "ratedBy.userId": id };
       const update = { $set: { "ratedBy.$.userRating": rating } };
-  
+
       await Video.findOneAndUpdate(filter, update);
 
-      const newRating=await addRating()
-   
+      const newRating = await addRating();
 
-      await Video.findOneAndUpdate({_id:videoId},{rating:newRating})
-  
-  
-      res.status(200).send({mesg:"Rating updated successfully !"});
+      await Video.findOneAndUpdate({ _id: videoId }, { rating: newRating });
+
+      res.status(200).send({ mesg: "Rating updated successfully !" });
     }
-
-   
+  } catch (err) {
+    console.log(err, "Error from App route rating");
+    res.status(500).send({ mesg: "Internal server error !" });
   }
-  catch(err){
-    console.log(err,"Error from App route rating")
-   res.status(500).send({mesg:"Internal server error !"})
-  }
- 
 });
 
 app.patch("/add/favourite", authentication, async (req, res) => {
@@ -224,93 +205,102 @@ app.get("/chef/:id", async (req, res) => {
   }
 });
 
-app.delete("/video/:videoId/comment/:commentId",authentication,async(req,res)=>{
-  let videoId=(req.params.videoId);
-  let commentId=req.params.commentId;
+app.delete(
+  "/video/:videoId/comment/:commentId",
+  authentication,
+  async (req, res) => {
+    let videoId = req.params.videoId;
+    let commentId = req.params.commentId;
 
-  try{
-    await Comment.updateOne(
-      { videoId: videoId },
-      { $pull: { comment: { commentId: commentId } } }
-    );
+    try {
+      await Comment.updateOne(
+        { videoId: videoId },
+        { $pull: { comment: { commentId: commentId } } }
+      );
 
-    const commentsDocument =await Comment.findOne({videoId:videoId})
+      const commentsDocument = await Comment.findOne({ videoId: videoId });
 
-    let comments=commentsDocument ? commentsDocument : {};
+      let comments = commentsDocument ? commentsDocument : {};
 
-     res.status(200).send({mesg:"Comment deleted successfully !",comments:comments})
-  }
-  catch(err){
+      res
+        .status(200)
+        .send({ mesg: "Comment deleted successfully !", comments: comments });
+    } catch (err) {
       console.log(err);
       res.status(500).send({ mesg: "Internal server error!" });
-  }
-})
-
-app.post("/add/comment",authentication,async(req,res)=>{
-
-  const {videoId,name,image,comment,id,email,commentId}=req.body;
-  
-  try{
-    const check=await Comment.findOne({videoId:videoId})
-
-    if(check){
-      let postTime=Date.now()
-      const commentObj={
-        userId:id,
-        userImage:image,
-        userComment:comment,
-        userName:name,
-        postedAt:postTime,
-        userEmail:email,
-        likedBy:[],
-        dislikedBy:[],
-        commentId:commentId
-      }
-
-       await Comment.findOneAndUpdate({videoId:videoId},{$push:{comment:commentObj}})
-
-       const commentsDocument =await Comment.findOne({videoId:videoId})
-
-       let comments=commentsDocument ? commentsDocument : {};
-
-       res.status(200).send({mesg:"Comment added successfully !",comments:comments})
     }
-    else{
-      let postTime=Date.now()
-      const commentObj={
-        userId:id,
-        userImage:image,
-        userComment:comment,
-        userName:name,
-        postedAt:postTime,
-        userEmail:email,
-        likedBy:[],
-        dislikedBy:[],
-        commentId:commentId
-      }
+  }
+);
 
-      const newComment=new Comment({
-        videoId:videoId,
-      })
+app.post("/add/comment", authentication, async (req, res) => {
+  const { videoId, name, image, comment, id, email, commentId } = req.body;
 
-     await newComment.save();
+  try {
+    const check = await Comment.findOne({ videoId: videoId });
 
-     await Comment.findOneAndUpdate({videoId:videoId},{$push:{comment:commentObj}})
+    if (check) {
+      let postTime = Date.now();
+      const commentObj = {
+        userId: id,
+        userImage: image,
+        userComment: comment,
+        userName: name,
+        postedAt: postTime,
+        userEmail: email,
+        likedBy: [],
+        dislikedBy: [],
+        commentId: commentId,
+      };
 
-     const commentsDocument =await Comment.findOne({videoId:videoId})
+      await Comment.findOneAndUpdate(
+        { videoId: videoId },
+        { $push: { comment: commentObj } }
+      );
 
-      let comments=commentsDocument ? commentsDocument : {};
+      const commentsDocument = await Comment.findOne({ videoId: videoId });
 
-      res.status(200).send({mesg:"Comment added successfully !",comments:comments})
+      let comments = commentsDocument ? commentsDocument : {};
+
+      res
+        .status(200)
+        .send({ mesg: "Comment added successfully !", comments: comments });
+    } else {
+      let postTime = Date.now();
+      const commentObj = {
+        userId: id,
+        userImage: image,
+        userComment: comment,
+        userName: name,
+        postedAt: postTime,
+        userEmail: email,
+        likedBy: [],
+        dislikedBy: [],
+        commentId: commentId,
+      };
+
+      const newComment = new Comment({
+        videoId: videoId,
+      });
+
+      await newComment.save();
+
+      await Comment.findOneAndUpdate(
+        { videoId: videoId },
+        { $push: { comment: commentObj } }
+      );
+
+      const commentsDocument = await Comment.findOne({ videoId: videoId });
+
+      let comments = commentsDocument ? commentsDocument : {};
+
+      res
+        .status(200)
+        .send({ mesg: "Comment added successfully !", comments: comments });
     }
-  
+  } catch (err) {
+    console.log(err, "Error from add comment !");
+    res.status(500).send("Internal server error !");
   }
-  catch(err){
-   console.log(err,"Error from add comment !")
-   res.status(500).send("Internal server error !")
-  }
-})
-
-
+});
 
 module.exports = app;
