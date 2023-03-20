@@ -11,6 +11,9 @@ As a user, you can create an account, sign in,watch and start adding your favori
 ## Deployed Link :
 https://amazingrecipe.in
 
+## Frontend Repository :
+https://github.com/Ritesh134340/Recipe_Client_Side/blob/main/README.md
+
 ## Client Flow
 ![Blank diagram](https://user-images.githubusercontent.com/105931703/224886457-e3d0a73b-e71d-4ffc-a804-c9c446247d0d.svg)
 
@@ -112,6 +115,12 @@ https://amazingrecipe.in
 
 ![Screenshot (755)](https://user-images.githubusercontent.com/105931703/226232913-2d69e958-b836-47f6-931d-85e031aaee00.png)
 
+
+![Screenshot (747)](https://user-images.githubusercontent.com/105931703/226232839-4604ee2d-44c7-4c7b-885d-d4892384bb8d.png)
+
+
+![Screenshot (748)](https://user-images.githubusercontent.com/105931703/226232843-f7e8d7cb-bc45-442e-bc5a-9be1048efce4.png)
+
 ### Backend :
 
 
@@ -119,12 +128,6 @@ https://amazingrecipe.in
 
 
 ![Screenshot (754)](https://user-images.githubusercontent.com/105931703/226232902-dd025992-ec7d-4f29-98e0-5a62a0dbc46a.png)
-
-
-![Screenshot (747)](https://user-images.githubusercontent.com/105931703/226232839-4604ee2d-44c7-4c7b-885d-d4892384bb8d.png)
-
-
-![Screenshot (748)](https://user-images.githubusercontent.com/105931703/226232843-f7e8d7cb-bc45-442e-bc5a-9be1048efce4.png)
 
 
 ![Screenshot (752)](https://user-images.githubusercontent.com/105931703/226232890-02e711c7-91db-4d29-8b07-a34492175bb7.png)
