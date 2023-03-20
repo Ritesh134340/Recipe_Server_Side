@@ -9,7 +9,11 @@ As a user, you can create an account, sign in,watch and start adding your favori
 
 
 ## Deployed Link :
-https://awesomerecipe.netlify.app
+https://amazingrecipe.in
+
+## Client Flow
+![Blank diagram](https://user-images.githubusercontent.com/105931703/224886457-e3d0a73b-e71d-4ffc-a804-c9c446247d0d.svg)
+
 ## Features :-
 
 **COMMON :**
@@ -24,6 +28,7 @@ https://awesomerecipe.netlify.app
 
 **AS USER :**
 - User can land on home page and watch different uploaded recipe videos.
+- User can update his profile image, name and email.
 - Any recipe video or channel name can be searched from the search bar given at top of the home page.
 - On the home page click search functionality is used which gets data from server based on search text.
 - All other search starts working if user starts typing, but there is pre-applied debouncing functionality to decrease the  rate of request made.
@@ -50,6 +55,12 @@ https://awesomerecipe.netlify.app
 
 
 ## Tech Stack
+
+**Deployment**
+- AWS (Client Side)
+- AWS (Server Side)
+- Domain (GoDaddy)
+- AWS services used for deployment(Load Balancer, Route 53, ACM for SSL certificate)
 
 **Client:**
  - React-Js
@@ -82,18 +93,62 @@ https://awesomerecipe.netlify.app
 
  ***Passport js***,
  ***Firebase Storage***,
- ***NodeMailer***,
- ***Bcrypt***,
- ***Jsonwebtoken***,
- ***Cors***, 
- ***Passport-facebook***,
-  ***Passport-google-auth20***,
-  ***YoutubeApi***
+  ***NodeMailer***,
+   ***Bcrypt***,
+    ***Jsonwebtoken***,
+    ***Cors***, 
+    ***Passport-facebook***,
+     ***Passport-google-auth20***,
+       ***YoutubeApi***
 
 
 ## Screenshots
 
-![App Screenshot](https://fitness-blender.netlify.app/)
+### Frontend :
+
+
+![Screenshot (745)](https://user-images.githubusercontent.com/105931703/226233064-dbedd050-6e9f-4c41-af08-795ba281a6c0.png)
+
+
+![Screenshot (755)](https://user-images.githubusercontent.com/105931703/226232913-2d69e958-b836-47f6-931d-85e031aaee00.png)
+
+### Backend :
+
+
+![Screenshot (753)](https://user-images.githubusercontent.com/105931703/226232899-89a1f840-e074-467f-8ef3-332c51603667.png)
+
+
+![Screenshot (754)](https://user-images.githubusercontent.com/105931703/226232902-dd025992-ec7d-4f29-98e0-5a62a0dbc46a.png)
+
+
+![Screenshot (747)](https://user-images.githubusercontent.com/105931703/226232839-4604ee2d-44c7-4c7b-885d-d4892384bb8d.png)
+
+
+![Screenshot (748)](https://user-images.githubusercontent.com/105931703/226232843-f7e8d7cb-bc45-442e-bc5a-9be1048efce4.png)
+
+
+![Screenshot (752)](https://user-images.githubusercontent.com/105931703/226232890-02e711c7-91db-4d29-8b07-a34492175bb7.png)
+
+
+![Screenshot (749)](https://user-images.githubusercontent.com/105931703/226232846-581657f1-36be-4747-ad17-abf4983c9681.png)
+
+
+![Screenshot (750)](https://user-images.githubusercontent.com/105931703/226232866-297301a5-990d-4103-adef-c7e86faf1790.png)
+
+
+![Screenshot (751)](https://user-images.githubusercontent.com/105931703/226232877-7ea9bc58-ed06-4daa-b7ed-8a8ea2faaa0a.png)
+
+
+### Responsive :
+
+![Screenshot (756)](https://user-images.githubusercontent.com/105931703/226232918-1e35b482-2989-4ab1-af7f-d88b4445119e.png)
+
+
+![Screenshot (757)](https://user-images.githubusercontent.com/105931703/226232923-f9b78054-1d79-4d7c-a7f7-9cbdeb88bb1f.png)
+
+
+![Screenshot (758)](https://user-images.githubusercontent.com/105931703/226232927-4e1e5e52-2091-4a72-9020-4c05ddcfe740.png)
+
 
 
 ## Run Locally :-
@@ -141,4 +196,3 @@ Start Backend server :
 ## 🔗 Links
 [![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ritesh134340.github.io/)
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ritesh134340/)
-
